@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD} # Pass via .env file
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:7.2-alpine
+    command: redis-server --requirepass your-strong-password
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: your-strong-password
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin1234
+      POSTGRES_DB: Aetherzen_Medical
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+  pg-data:

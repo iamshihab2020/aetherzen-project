@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String?
+  role          UserRole       @default(PATIENT)
+  hospitalId    String? // if needed
+  prescriptions Prescription[]
+  orders        Order[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum UserRole {
+  HOSPITAL_ADMIN
+  DOCTOR
+  PATIENT
+}
+
+model Product {
+  id                     String          @id @default(uuid())
+  title                  String
+  description            String?
+  sku                    String?         @unique
+  priceCents             Int
+  isPrescriptionRequired Boolean         @default(false)
+  variants               Variant[]
+  certifications         Certification[]
+  inventory              Int
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  Prescription           Prescription[]
+}
+
+model Variant {
+  id              String  @id @default(uuid())
+  product         Product @relation(fields: [productId], references: [id])
+  productId       String
+  name            String
+  extraPriceCents Int     @default(0)
+  attributes      Json?
+}
+
+model Certification {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  filename  String
+  url       String
+  issuedBy  String?
+}
+
+model Prescription {
+  id        String             @id @default(uuid())
+  user      User               @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product            @relation(fields: [productId], references: [id])
+  productId String
+  filePath  String
+  status    PrescriptionStatus @default(PENDING)
+  createdAt DateTime           @default(now())
+}
+
+enum PrescriptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  totalCents  Int
+  status      OrderStatus @default(PENDING)
+  isEmergency Boolean     @default(false)
+  isTaxExempt Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id             String  @id @default(uuid())
+  order          Order   @relation(fields: [orderId], references: [id])
+  orderId        String
+  productId      String
+  variantId      String?
+  qty            Int
+  unitPriceCents Int
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
+  COMPLETED
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  userId    String?
+  details   Json?
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,59 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build/Compiled files
+dist/
+build/
+.next/
+out/
+
+# Next.js
+.next/cache/
+.next/build-manifest.json
+.next/export/
+.next/standalone/
+
+# Prisma
+/prisma/migrations/
+/prisma/migration_lock.toml
+
+# TypeScript
+*.tsbuildinfo
+
+# Frontend (Next.js static/generated)
+/public/certifications/  # (Keep if certs are sensitive)
+/.next/static/chunks/
+/.next/static/development/
+/.next/static/webpack/
+
+# Docker
+docker-compose.override.yml
+
+# OS-specific
+ehthumbs.db
+[Tt]humbs.db
