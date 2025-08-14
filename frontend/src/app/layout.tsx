@@ -1,33 +1,24 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/providers/Providers";
-import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Aetherzen Medical",
-  description: "Medical Equipment Store",
+  title: "AetherZen MediProcure",
+  description: "Medical Equipment & Supplies Procurement Platform",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body>
-        {/* <Navbar /> */}
+    <html lang="en">
+      <body className={inter.className}>
         <Providers>{children}</Providers>
-        {/* <Footer /> */}
       </body>
     </html>
   );
