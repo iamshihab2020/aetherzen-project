@@ -3,69 +3,87 @@ import { Request, Response } from "express";
 import prisma from "../prismaClient";
 import bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt";
-import { registerSchema, loginSchema } from "../utils/auth.validation";
 import { logAction } from "../services/audit.service";
-import { AuthRequest } from "../middlewares/auth.middleware";
 import { addToBlacklist } from "../utils/redisClient";
 import { ZodError } from "zod";
+import {
+  adminCreateUserSchema,
+  registerPublicSchema,
+  loginSchema,
+} from "../utils/auth.validation";
+import { AuthRequest } from "../types/auth.types";
+import { UserRole } from "@prisma/client";
 
-export const register = async (req: AuthRequest, res: Response) => {
+// Public registration: always PATIENT
+export const register = async (req: Request, res: Response) => {
   try {
-    // Validate input with proper error handling
-    const validation = registerSchema.safeParse(req.body);
+    const validation = registerPublicSchema.safeParse(req.body);
     if (!validation.success) {
-      // Use ZodError formatting for errors
-      const errorDetails =
-        validation.error instanceof ZodError
-          ? validation.error.format()
-          : validation.error;
-
       return res.status(400).json({
         message: "Validation error",
-        errors: errorDetails,
+        errors: validation.error.format(),
       });
     }
+    const { email, password, name } = validation.data;
 
-    const { email, password, name, role } = validation.data;
-
-    // HIPAA: Only admins can create non-patient users
-    if (
-      role !== "PATIENT" &&
-      (!req.user || req.user.role !== "HOSPITAL_ADMIN")
-    ) {
-      await logAction("UNAUTHORIZED_ROLE_ASSIGNMENT", req.user?.userId, {
-        attemptedRole: role,
-      });
-      return res
-        .status(403)
-        .json({ message: "Only admins can create non-patient users" });
-    }
-
-    // Existing user check
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      // Use undefined instead of null for userId
       await logAction("REGISTER_ATTEMPT_EXISTING_EMAIL", undefined, { email });
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Create user
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { email, password: hash, name, role },
+      data: { email, password: hash, name, role: "PATIENT" },
     });
 
-    // Audit log
     await logAction("USER_REGISTERED", user.id, { role: user.role });
-
     const token = signToken({ userId: user.id, role: user.role });
-    res.json({
+    return res.json({
       token,
       user: { id: user.id, email: user.email, role: user.role },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Admin-only: create user with explicit role (incl. non-patient)
+export const createUserByAdmin = async (req: AuthRequest, res: Response) => {
+  try {
+    const validation = adminCreateUserSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validation.error.format(),
+      });
+    }
+    const { email, password, name, role } = validation.data;
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      await logAction("ADMIN_CREATE_USER_EXISTING_EMAIL", req.user?.userId, {
+        email,
+      });
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { email, password: hash, name, role: role as UserRole },
+    });
+
+    await logAction("ADMIN_CREATED_USER", req.user?.userId, {
+      createdUserId: user.id,
+      role: user.role,
+    });
+    return res
+      .status(201)
+      .json({ user: { id: user.id, email: user.email, role: user.role } });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 

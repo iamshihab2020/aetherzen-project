@@ -1,7 +1,10 @@
+export type UserRole = "HOSPITAL_ADMIN" | "DOCTOR" | "PATIENT";
+
 export interface User {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
+  name?: string;
 }
 
 export interface LoginCredentials {
@@ -9,14 +12,9 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface RegisterCredentials extends LoginCredentials {
-  name: string;
-  role: string;
-}
-
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isLoading: boolean;
-  error: string | null;
+// For public registration, role is not accepted from UI
+export interface RegisterCredentials {
+  name?: string;
+  email: string;
+  password: string;
 }

@@ -7,13 +7,6 @@ import { useAppDispatch } from "@/store/hooks";
 
 import FormInput from "@/components/ui/FormInput";
 import LoadingButton from "@/components/ui/LoadingButton";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -28,7 +21,6 @@ const RegisterPage = () => {
     name: "",
     email: "",
     password: "",
-    role: "PATIENT",
   });
 
   // RTK Query mutation + its status flags
@@ -52,9 +44,9 @@ const RegisterPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, role: value }));
-  };
+  // const handleSelectChange = (value: string) => {
+  //   setFormData((prev) => ({ ...prev, role: value }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,27 +130,6 @@ const RegisterPage = () => {
                     : undefined
                 }
               />
-
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Role
-                </label>
-                <Select
-                  onValueChange={handleSelectChange}
-                  value={formData.role}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PATIENT">Patient</SelectItem>
-                    <SelectItem value="DOCTOR">Doctor</SelectItem>
-                    <SelectItem value="HOSPITAL_ADMIN">
-                      Hospital Admin
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             {errorMessage &&

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { LoginCredentials, RegisterCredentials } from "@/types/auth";
+import { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 import { login, register } from "@/services/auth.service";
 
 // Define proper types
@@ -61,11 +61,10 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ token: string; user: AuthUser }>
+      action: PayloadAction<{ token: string; user: User }>
     ) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
-
       if (typeof window !== "undefined") {
         localStorage.setItem("authToken", action.payload.token);
         localStorage.setItem("authUser", JSON.stringify(action.payload.user));
@@ -74,7 +73,6 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
-
       if (typeof window !== "undefined") {
         localStorage.removeItem("authToken");
         localStorage.removeItem("authUser");

@@ -1,14 +1,9 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import dotenv from "dotenv";
+import { TokenPayload } from "../types/auth.types";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
-
-export interface TokenPayload {
-  userId: string;
-  role: string;
-  [key: string]: any;
-}
 
 export function signToken(
   payload: TokenPayload,
