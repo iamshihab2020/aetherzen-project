@@ -96,23 +96,27 @@ export const listCategories = async (req: Request, res: Response) => {
       include: {
         children: true,
         parent: true,
-        products: true, // Include products count
+        products: {
+          include: {
+            ProductVariant: true,
+            certifications: true,
+          },
+        },
       },
       orderBy: {
         name: "asc",
       },
     });
 
-    // Transform to include product count without full product data
-    const categoriesWithCount = categories.map((category) => ({
+    // Add productCount while keeping full products array
+    const categoriesWithProducts = categories.map((category) => ({
       ...category,
       productCount: category.products.length,
-      products: undefined, // Remove full products array
     }));
 
     res.json({
       message: "Categories retrieved successfully",
-      data: categoriesWithCount,
+      data: categoriesWithProducts,
     });
   } catch (error: any) {
     console.error("Category listing error:", error);
@@ -125,6 +129,49 @@ export const listCategories = async (req: Request, res: Response) => {
       });
     }
 
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getCategoryById = async (req: Request, res: Response) => {
+  const categoryId = req.params.id;
+
+  try {
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      include: {
+        children: true,
+        parent: true,
+        products: {
+          include: {
+            ProductVariant: true,
+            certifications: true,
+          },
+        },
+      },
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        message: "Category not found",
+      });
+    }
+
+    // Add productCount to the category
+    const categoryWithProducts = {
+      ...category,
+      productCount: category.products.length,
+    };
+
+    res.json({
+      message: "Category retrieved successfully",
+      data: categoryWithProducts,
+    });
+  } catch (error: any) {
+    console.error("Category fetch error:", error);
     res.status(500).json({
       message: "Server error",
       error: error.message,
