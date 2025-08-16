@@ -13,7 +13,7 @@ import {
   adminCreateUserSchema,
   loginSchema,
   registerPublicSchema,
-} from "../validation/auth.validation";
+} from "../validation/auth.dto";
 
 // Public registration: always PATIENT
 export const register = async (req: Request, res: Response) => {

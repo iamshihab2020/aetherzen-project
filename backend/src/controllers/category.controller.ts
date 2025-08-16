@@ -4,7 +4,7 @@ import prisma from "../prismaClient";
 import {
   CreateCategorySchema,
   UpdateCategorySchema,
-} from "../validation/category.validation";
+} from "../validation/category.dto";
 import { logAction } from "../services/audit.service";
 import { ZodError } from "zod";
 

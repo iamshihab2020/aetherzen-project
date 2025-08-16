@@ -8,7 +8,7 @@ import {
   updateProduct,
 } from "../controllers/products.controller";
 import { authMiddleware, authorizeRoles } from "../middlewares/auth.middleware";
-import { uploadPDF } from "../utils/upload";
+import { uploadPDF } from "../utils/upload/upload.certifications";
 
 const router = Router();
 

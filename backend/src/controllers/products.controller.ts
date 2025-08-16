@@ -5,7 +5,7 @@ import {
   CreateProductSchema,
   UpdateProductSchema,
   ListQuerySchema,
-} from "../validation/product.validation";
+} from "../validation/product.dto";
 import fs from "fs/promises";
 import path from "path";
 import { ZodError } from "zod";
