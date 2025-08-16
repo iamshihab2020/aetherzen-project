@@ -6,13 +6,14 @@ import { signToken } from "../utils/jwt";
 import { logAction } from "../services/audit.service";
 import { addToBlacklist } from "../utils/redisClient";
 import { ZodError } from "zod";
-import {
-  adminCreateUserSchema,
-  registerPublicSchema,
-  loginSchema,
-} from "../utils/auth.validation";
+
 import { AuthRequest } from "../types/auth.types";
 import { UserRole } from "@prisma/client";
+import {
+  adminCreateUserSchema,
+  loginSchema,
+  registerPublicSchema,
+} from "../validation/auth.validation";
 
 // Public registration: always PATIENT
 export const register = async (req: Request, res: Response) => {

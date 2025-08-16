@@ -12,6 +12,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useRegisterMutation } from "@/store/auth.api";
 import { setCredentials } from "@/store/slices/auth.slice";
+export interface ErrorResponse {
+  message?: string;
+}
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -29,13 +32,31 @@ const RegisterPage = () => {
   // Normalize RTK Query errors into a simple string
   const parseError = (): string | undefined => {
     if (!registerError) return undefined;
-    if ("data" in registerError && (registerError.data as any).message) {
-      return (registerError.data as any).message;
+
+    // Handle FetchBaseQueryError with data
+    if ("data" in registerError) {
+      const data = registerError.data;
+
+      // Handle string error data
+      if (typeof data === "string") {
+        return data;
+      }
+
+      // Handle object error data with message
+      if (data && typeof data === "object") {
+        const errorData = data as ErrorResponse;
+        if (errorData.message) {
+          return errorData.message;
+        }
+      }
     }
-    if ("error" in registerError) {
-      return registerError.error as string;
+
+    // Handle SerializedError
+    if ("error" in registerError && registerError.error) {
+      return registerError.error;
     }
-    return JSON.stringify(registerError);
+    // Handle other cases
+    return "An unknown error occurred";
   };
   const errorMessage = parseError();
 

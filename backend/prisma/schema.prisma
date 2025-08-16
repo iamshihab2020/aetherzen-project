@@ -27,18 +27,23 @@ enum UserRole {
 }
 
 model Product {
-  id                     String          @id @default(uuid())
+  id                     String           @id @default(uuid())
   title                  String
   description            String?
-  sku                    String?         @unique
+  sku                    String?          @unique
   priceCents             Int
-  isPrescriptionRequired Boolean         @default(false)
+  isPrescriptionRequired Boolean          @default(false)
+  isEmergencyItem        Boolean?         @default(false)
+  isTaxExempt            Boolean          @default(false)
   variants               Variant[]
   certifications         Certification[]
   inventory              Int
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
   Prescription           Prescription[]
+  Category               Category?        @relation(fields: [categoryId], references: [id])
+  categoryId             String?
+  ProductVariant         ProductVariant[]
 }
 
 model Variant {
@@ -112,4 +117,28 @@ model AuditLog {
   userId    String?
   details   Json?
   createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  slug        String     @unique
+  parentId    String?
+  parent      Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryToCategory")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  size            String?
+  model           String?
+  certifications  String[] // e.g., ["FDA", "CE"]
+  additionalPrice Decimal? @db.Decimal(12, 2)
 }

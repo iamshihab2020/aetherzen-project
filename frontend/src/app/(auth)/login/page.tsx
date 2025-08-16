@@ -12,6 +12,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useLoginMutation } from "@/store/auth.api";
 import { setCredentials } from "@/store/slices/auth.slice";
+export interface ErrorResponse {
+  message?: string;
+}
 
 const LoginPage = () => {
   const router = useRouter();
@@ -26,15 +29,28 @@ const LoginPage = () => {
   // Normalizes RTK Query errors into a simple string
   const parseError = (): string | undefined => {
     if (!loginError) return undefined;
-    // fetchBaseQuery error
-    if ("data" in loginError && (loginError.data as any).message) {
-      return (loginError.data as any).message;
+
+    if ("data" in loginError) {
+      const data = loginError.data;
+
+      if (typeof data === "string") {
+        return data;
+      }
+
+      if (data && typeof data === "object") {
+        const errorData = data as ErrorResponse;
+        if (errorData.message) {
+          return errorData.message;
+        }
+      }
     }
-    // serialized error
-    if ("error" in loginError) {
-      return loginError.error as string;
+
+    // Handle SerializedError
+    if ("error" in loginError && loginError.error) {
+      return loginError.error;
     }
-    return JSON.stringify(loginError);
+    // Handle other cases
+    return "An unknown error occurred";
   };
   const errorMessage = parseError();
 
