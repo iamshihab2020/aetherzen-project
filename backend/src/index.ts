@@ -20,8 +20,14 @@ if (!fs.existsSync(privateDir)) {
   fs.mkdirSync(privateDir, { recursive: true });
 }
 
+const corsOptions = {
+  origin: "http://localhost:3000", // Your frontend origin
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(globalLimiter);
 

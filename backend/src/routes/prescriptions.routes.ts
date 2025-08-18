@@ -17,7 +17,7 @@ router.post(
 // Patient: mine
 router.get("/mine", authMiddleware, PrescriptionsController.mine);
 
-// Doctor/Admin: list all/pending
+// Doctor/dashboard: list all/pending
 router.get(
   "/",
   authMiddleware,

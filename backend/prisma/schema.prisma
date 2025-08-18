@@ -47,21 +47,15 @@ model Product {
   ProductVariant         ProductVariant[]
   BulkPricing            BulkPricing[]
   InventoryAlert         InventoryAlert[]
-  isHazardous            Boolean          @default(false)
-  technicalSpecs         Json?
-  expiryDays             Int? // Days until expiry after production
 }
 
 model Variant {
-  id              String   @id @default(uuid())
-  product         Product  @relation(fields: [productId], references: [id])
+  id              String  @id @default(uuid())
+  product         Product @relation(fields: [productId], references: [id])
   productId       String
   name            String
-  extraPriceCents Int      @default(0)
+  extraPriceCents Int     @default(0)
   attributes      Json?
-  inventory       Int      @default(0)
-  certifications  String[] // e.g., ["FDA", "CE"]
-  technicalSpecs  Json?
 }
 
 model Certification {
@@ -74,16 +68,14 @@ model Certification {
 }
 
 model Prescription {
-  id          String             @id @default(uuid())
-  user        User               @relation(fields: [userId], references: [id])
-  userId      String
-  product     Product            @relation(fields: [productId], references: [id])
-  productId   String
-  filePath    String
-  status      PrescriptionStatus @default(PENDING)
-  isEmergency Boolean            @default(false)
-
-  createdAt DateTime @default(now())
+  id        String             @id @default(uuid())
+  user      User               @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product            @relation(fields: [productId], references: [id])
+  productId String
+  filePath  String
+  status    PrescriptionStatus @default(PENDING)
+  createdAt DateTime           @default(now())
 }
 
 enum PrescriptionStatus {
@@ -93,32 +85,25 @@ enum PrescriptionStatus {
 }
 
 model Order {
-  id            String      @id @default(uuid())
-  user          User        @relation(fields: [userId], references: [id])
-  userId        String
-  totalCents    Int
-  status        OrderStatus @default(PENDING)
-  isEmergency   Boolean     @default(false)
-  isTaxExempt   Boolean     @default(false)
-  createdAt     DateTime    @default(now())
-  items         OrderItem[]
-  priority      Int         @default(0) // Higher = more urgent
-  shippingNotes String?
+  id          String      @id @default(uuid())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  totalCents  Int
+  status      OrderStatus @default(PENDING)
+  isEmergency Boolean     @default(false)
+  isTaxExempt Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  items       OrderItem[]
 }
 
 model OrderItem {
-  id             String    @id @default(uuid())
-  order          Order     @relation(fields: [orderId], references: [id])
+  id             String  @id @default(uuid())
+  order          Order   @relation(fields: [orderId], references: [id])
   orderId        String
   productId      String
   variantId      String?
   qty            Int
   unitPriceCents Int
-  certifications String[] // Snapshotted at order time
-  technicalSpecs Json? // Snapshotted at order time
-  expiryDate     DateTime? // Calculated based on product expiryDays
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
 }
 
 enum OrderStatus {

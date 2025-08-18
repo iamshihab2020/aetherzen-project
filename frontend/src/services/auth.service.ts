@@ -7,11 +7,12 @@ export const login = async (credentials: LoginCredentials) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
+    credentials: "include",
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Login failed");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Login failed");
   }
 
   return await response.json();
@@ -22,11 +23,12 @@ export const register = async (credentials: RegisterCredentials) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
+    credentials: "include",
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Registration failed");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Registration failed");
   }
 
   return await response.json();

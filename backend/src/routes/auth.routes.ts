@@ -19,7 +19,7 @@ router.post("/logout", logout);
 
 // Admin-only: create users with any role
 router.post(
-  "/admin/users",
+  "/dashboard/users",
   authMiddleware,
   authorizeRoles("HOSPITAL_ADMIN"),
   createUserByAdmin

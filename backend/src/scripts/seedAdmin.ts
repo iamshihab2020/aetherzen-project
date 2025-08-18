@@ -28,10 +28,10 @@ async function main() {
   });
 
   console.log(`
-  Admin user created successfully!
-  Email: ${email}
-  Password: ${password}
-  `);
+    Admin user created successfully!
+    Email: ${email}
+    Password: ${password}
+    `);
 }
 
 main()

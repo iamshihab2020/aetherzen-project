@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 import { login, register } from "@/services/auth.service";
 
-// Define proper types
 interface AuthUser {
   id: string;
   email: string;
@@ -31,7 +30,6 @@ export const loginUser = createAsyncThunk(
     try {
       return await login(credentials);
     } catch (error: unknown) {
-      // Proper error typing
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       }
@@ -46,7 +44,6 @@ export const registerUser = createAsyncThunk(
     try {
       return await register(credentials);
     } catch (error: unknown) {
-      // Proper error typing
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       }
@@ -61,12 +58,14 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ token: string; user: User }>
+      action: PayloadAction<{ token?: string; user?: User }>
     ) => {
-      state.token = action.payload.token;
-      state.user = action.payload.user;
-      if (typeof window !== "undefined") {
+      if (action.payload.token) {
+        state.token = action.payload.token;
         localStorage.setItem("authToken", action.payload.token);
+      }
+      if (action.payload.user) {
+        state.user = action.payload.user;
         localStorage.setItem("authUser", JSON.stringify(action.payload.user));
       }
     },

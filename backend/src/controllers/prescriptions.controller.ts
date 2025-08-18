@@ -70,7 +70,7 @@ export class PrescriptionsController {
     return res.json({ items: list });
   }
 
-  // Doctor/Admin: list & filter
+  // Doctor/dashboard: list & filter
   static async list(req: AuthRequest, res: Response) {
     const parsed = ListPrescriptionsQuerySchema.safeParse(req.query);
     if (!parsed.success)
@@ -99,7 +99,7 @@ export class PrescriptionsController {
     return res.json({ items, total, page, pages: Math.ceil(total / limit) });
   }
 
-  // Doctor/Admin: approve
+  // Doctor/dashboard: approve
   static async approve(req: AuthRequest, res: Response) {
     const { id } = req.params;
     const pres = await prisma.prescription.update({
@@ -116,7 +116,7 @@ export class PrescriptionsController {
     return res.json({ prescription: pres });
   }
 
-  // Doctor/Admin: reject
+  // Doctor/dashboard: reject
   static async reject(req: AuthRequest, res: Response) {
     const { id } = req.params;
     const pres = await prisma.prescription.update({

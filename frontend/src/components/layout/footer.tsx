@@ -57,7 +57,7 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/admin" className="hover:underline">
+              <Link href="/dashboard" className="hover:underline">
                 Admin Dashboard
               </Link>
             </li>

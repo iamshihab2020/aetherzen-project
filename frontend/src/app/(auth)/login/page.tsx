@@ -10,7 +10,7 @@ import LoadingButton from "@/components/ui/LoadingButton";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useLoginMutation } from "@/store/auth.api";
+import { useLoginMutation } from "@/store/slices/auth.api";
 import { setCredentials } from "@/store/slices/auth.slice";
 export interface ErrorResponse {
   message?: string;

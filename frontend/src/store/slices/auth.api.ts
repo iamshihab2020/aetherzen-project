@@ -1,4 +1,4 @@
-import { api } from "./slices/api.slice";
+import { api } from "./api.slice";
 import type { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 
 interface AuthResponse {
@@ -28,7 +28,7 @@ export const authApi = api.injectEndpoints({
       { email: string; password: string; name?: string; role: User["role"] }
     >({
       query: (payload) => ({
-        url: "/auth/admin/users",
+        url: "/auth/dashboard/users",
         method: "POST",
         body: payload,
       }),

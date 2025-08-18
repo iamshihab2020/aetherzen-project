@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev --name init",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "seed:admin": "ts-node src/scripts/seedAdmin.ts"
+    "seed:admin": "ts-node src/scripts/seedAdmin.ts",
+    "seed:user": "ts-node src/scripts/seedUser.ts"
   },
   "keywords": [],
   "author": "",

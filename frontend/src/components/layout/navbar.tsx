@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RootState } from "@/store/store";
-import { useLogoutMutation } from "@/store/auth.api";
+import { useLogoutMutation } from "@/store/slices/auth.api";
 import { logout as clearAuth } from "@/store/slices/auth.slice";
 import { Badge } from "../ui/badge";
 
@@ -67,7 +67,7 @@ export default function Navbar() {
   // role-specific links
   const roleLinks = {
     HOSPITAL_ADMIN: [
-      { name: "Dashboard", href: "/dashboard" },
+      { name: "Dashboard", href: "/dashboard/products" },
       { name: "Inventory", href: "/inventory" },
       { name: "Orders", href: "/orders" },
       { name: "Reports", href: "/reports" },
@@ -93,7 +93,7 @@ export default function Navbar() {
         <p className="hidden sm:block">Mon - Fri: 8:00 am - 7:00 pm</p>
         <div className="flex items-center gap-4 text-center">
           <span>Sign up & get 20% off</span>
-          <Link href="/admin/docs" className="underline hidden sm:block">
+          <Link href="/dashboard/docs" className="underline hidden sm:block">
             API Docs
           </Link>
         </div>
